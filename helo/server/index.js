@@ -17,6 +17,8 @@ massive(CONNECTION_STRING).then(db => app.set('db', db));
 
 app.post('/user/create', ctrl.createUser);
 app.post('/user/get', ctrl.getUser);
+app.get('/posts/:id', ctrl.getPosts);
+
 
 app.listen(SERVER_PORT, () => {
     console.log(`Listening on port: ${SERVER_PORT}`)
