@@ -5,20 +5,36 @@ module.exports = {
         const {username, password, pic} = req.body;
 
         db.create_user([username, password, pic])
-        .then(user => res.status(200).send(user))
-        .catch(() => res.status(500).send('Error'));
+        .then(user => {
+            console.log(user);
+            req.session.userid = user.id;
+            res.status(200).send(user);
+            console.log(req.session);
+        })
+        .catch((e) => {
+            console.log(e); 
+            res.status(500).send(e)
+        })    
     },
     getUser: (req, res) => {
         const db = req.app.get('db');
         const {username, password} = req.body;
 
         db.get_user([username, password])
-        .then(user => res.status(200).send(user))
-        .catch(() => res.status(500).send('Error'));
+        .then(user => {
+            console.log(user);
+            req.session.userid = user.id;
+            res.status(200).send(user);
+            console.log(req.session);
+        })
+        .catch((e) => {
+            console.log(e); 
+            res.status(500).send(e)
+        })
     },
     getPosts: (req, res) => {
         const db = req.app.get('db');
-        const {id} = req.params;
+        const {userid} = req.session;
         const {userposts, search} = req.query;
         let str = `%${search}%`
         // console.log(req.query, req.params, db.run);
@@ -31,14 +47,14 @@ module.exports = {
                 res.status(500).send(e)
             })
         } else if (!userposts && !search) {
-            db.get_otherposts([id])
+            db.get_otherposts([userid])
             .then(posts => res.status(200).send(posts))
             .catch((e) => {
                 console.log(e); 
                 res.status(500).send(e)
             })
         } else if (!userposts && search) {
-            db.get_otherposts_search([id, str])
+            db.get_otherposts_search([userid, str])
             .then(posts => res.status(200).send(posts))
             .catch((e) => {
                 console.log(e); 
@@ -55,9 +71,9 @@ module.exports = {
     },
     getSingle: (req, res) => {
         const db = req.app.get('db');
-        const {id} = req.params;
+        const {userid} = req.session;
 
-        db.get_single([id])
+        db.get_single([userid])
         .then(post => res.status(200).send(post))
         .catch((e) => {
             console.log(e); 
@@ -66,15 +82,29 @@ module.exports = {
     },
     newPost: (req, res) => {
         const db = req.app.get('db');
-        const {id} = req.params;
+        const {userid} = req.session;
         const {title, img, content} = req.body;
 
-        db.new_post([title, img, content, id])
+        db.new_post([title, img, content, userid])
         .then(() => res.status(200).send('Posted'))
         .catch((e) => {
             console.log(e); 
             res.status(500).send(e)
         })
-    }
+    },
+    logout: (req, res) => {
+        req.session.destroy();
+        res.status(200).send(req.session);
+    },
+    userInfo: (req, res) => {
+        const db = req.app.get('db');
+        const {userid} = req.session;
 
+        db.user_info([userid])
+        .then(user => res.status(200).send(user))
+        .catch((e) => {
+            console.log(e); 
+            res.status(500).send(e)
+        })
+    }
 }

@@ -3,6 +3,7 @@ import Nav from '../Nav/Nav';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
+import noImage from '../../images/no_image.jpg';
 
 
 class Form extends Component {
@@ -18,7 +19,6 @@ class Form extends Component {
         }
 
         this.handlePost = this.handlePost.bind(this);
-        // this.handleImg = this.handleImg.bind(this);
         this.newPost = this.newPost.bind(this);
 
     }
@@ -29,34 +29,19 @@ class Form extends Component {
         })
     }
 
-    // handleImg(e){
-    //     e.preventDefault();
-    //     let reader = new FileReader();
-    //     let file = e.target.value;
-    
-    //     reader.onloadend = () => {
-    //       this.setState({
-    //         img: file,
-    //         imagePreviewUrl: reader.result
-    //       });
-    //     }
-    
-    //     reader.readAsDataURL(file)
-    // }
-
     newPost(){
         let {title, img, content} = this.state;
-        axios.post(`/posts/${this.props.id}`, {title, img, content}).then(res => {
+        axios.post(`/posts/`, {title, img, content}).then(res => {
             this.setState({redirect: true})
         })
     }
     
 
     render() {
-        let {imgPreview} = this.state;
-        let preview = null;
-        if (imgPreview) {
-          preview= (<img src={imgPreview} />);
+        let {img} = this.state;
+        let preview = <img className='new-post-img' src={noImage}/>;
+        if (img) {
+          preview = (<img className='new-post-img' src={img} />);
         }
         if(this.state.redirect){
             return(<Redirect to='/dash' />)

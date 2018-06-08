@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import Nav from '../Nav/Nav';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
+// import {connect} from 'react-redux';
 import axios from 'axios';
 
-class Dashboard extends Component {
+export default class Dashboard extends Component {
     constructor(){
         super ();
 
@@ -26,18 +26,16 @@ class Dashboard extends Component {
     }
 
     getPosts(){
-        let {id} = this.props;
         let {search, myPosts} = this.state;
-        axios.get(`/posts/${id}?search=${search}&&userposts=${myPosts}`).then(res => {
+        axios.get(`/posts/?search=${search}&&userposts=${myPosts}`).then(res => {
             this.setState({posts: res.data})
         });
     }
 
     resetPosts(){
-        let {id} = this.props;
         let {myPosts} = this.state;
         let reset = '';
-        axios.get(`/posts/${id}?search=${reset}&&userposts=${myPosts}`).then(res => {
+        axios.get(`/posts/?search=${reset}&&userposts=${myPosts}`).then(res => {
             this.setState({posts: res.data, search: ''})
         });
     }
@@ -84,11 +82,3 @@ class Dashboard extends Component {
         )
     }
 }
-
-function mapStateToProps(state) {
-    return {
-        id: state.id
-    }
-}
-
-export default connect(mapStateToProps)(Dashboard);

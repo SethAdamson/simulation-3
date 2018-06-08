@@ -40,7 +40,7 @@ class Auth extends Component {
         let {username, password} = this.state;
         axios.post('/user/get', {username, password}).then(res => {
             // console.log(res.data[0].username);
-            this.props.updateUser(res.data[0].id, res.data[0].username, res.data[0].password, res.data[0].pic);
+            this.props.updateUser(res.data[0].username, res.data[0].password, res.data[0].pic);
             this.setState({redirect: true});
         })
     }
