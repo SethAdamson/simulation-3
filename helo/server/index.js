@@ -13,11 +13,15 @@ const app = express();
 
 app.use(bodyParser.json());
 
-massive(CONNECTION_STRING).then(db => app.set('db', db));
+massive(CONNECTION_STRING).then(db => {
+    app.set('db', db)
+});
 
 app.post('/user/create', ctrl.createUser);
 app.post('/user/get', ctrl.getUser);
 app.get('/posts/:id', ctrl.getPosts);
+app.post('/posts/:id', ctrl.newPost);
+app.get('/single/:id', ctrl.getSingle);
 
 
 app.listen(SERVER_PORT, () => {

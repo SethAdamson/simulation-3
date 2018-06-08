@@ -1,6 +1,6 @@
 module.exports = {
     createUser: (req, res) => {
-        console.log(req.body);
+        // console.log(req.body);
         const db = req.app.get('db');
         const {username, password, pic} = req.body;
 
@@ -20,27 +20,61 @@ module.exports = {
         const db = req.app.get('db');
         const {id} = req.params;
         const {userposts, search} = req.query;
-        console.log(req.query, req.params);
+        let str = `%${search}%`
+        // console.log(req.query, req.params, db.run);
 
         if(userposts && search){
-            db.get_myposts_search([search])
+            db.get_myposts_search([str])
             .then(posts => res.status(200).send(posts))
-            .catch(() => res.status(500).send('Error'))
+            .catch((e) => {
+                console.log(e); 
+                res.status(500).send(e)
+            })
         } else if (!userposts && !search) {
             db.get_otherposts([id])
             .then(posts => res.status(200).send(posts))
-            .catch(() => res.status(500).send('Error'))
+            .catch((e) => {
+                console.log(e); 
+                res.status(500).send(e)
+            })
         } else if (!userposts && search) {
-            db.get_otherposts_search([id, search])
+            db.get_otherposts_search([id, str])
             .then(posts => res.status(200).send(posts))
-            .catch(() => res.status(500).send('Error'))
+            .catch((e) => {
+                console.log(e); 
+                res.status(500).send(e)
+            })        
         } else if (userposts && !search) {
             db.get_posts()
             .then(posts => res.status(200).send(posts))
-            .catch(() => res.status(500).send('Error'))
+            .catch((e) => {
+                console.log(e); 
+                res.status(500).send(e)
+            })        
         }
     },
+    getSingle: (req, res) => {
+        const db = req.app.get('db');
+        const {id} = req.params;
 
+        db.get_single([id])
+        .then(post => res.status(200).send(post))
+        .catch((e) => {
+            console.log(e); 
+            res.status(500).send(e)
+        })
+    },
+    newPost: (req, res) => {
+        const db = req.app.get('db');
+        const {id} = req.params;
+        const {title, img, content} = req.body;
 
+        db.new_post([title, img, content, id])
+        .then(() => res.status(200).send('Posted'))
+        .catch((e) => {
+            console.log(e); 
+            res.status(500).send(e)
+        })
+    }
 
 }
